@@ -4,7 +4,12 @@ const bodyParser = require('body-parser');
 const routes = require('./routes');
 const app = express();
 
+// Register redis
 require('./redis');
+
+// Add blacklisting
+require('./blackList');
+
 // Register middlewares
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());

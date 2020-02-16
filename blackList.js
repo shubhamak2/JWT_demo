@@ -3,21 +3,23 @@ const moment = require('moment');
 const client = require('./redis');
 
 const blackList = {
-  addTokenInBlackList: (token) => {
+  addToken: (payload) => {
     return new Promise((resolve, reject) => {
-      // Decoding the JWT token
-      const jwtData = jwt.decode(token);
       // Fetch the toke expiry time
-      const expirationTime = jwtData.payload.exp;
-      const tokenExpiryDate = moment(expirationTime);
-      const currentDate = moment();
-      // Calculating the difference between tokenExpiry and currentTime
-      const seconds = tokenExpiryDate.diff(currentDate, 'seconds');
-      const jwtUniqueTokenId = jwtData.payload.jti;
-      // Setting the redis key as jti and its value is userId
+      const tokenExpiryTime = moment(new Date(payload.exp * 1000));
+      
+      // Calculating the difference between the token expired time and current time in seconds 
+      const seconds = tokenExpiryTime.diff(moment(), 'seconds');
+
+      // Setting the redis key as jti and its value as id of the user
       // It will expire in calculated seconds
-      client.set(jwtUniqueTokenId, jwtData.payload.userId, "EX", seconds, function (err, reply) {
-        console.log(reply.toString());
+      client.set(payload.jwtid, payload.id, "EX", seconds, (err, reply) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log('Stored key', payload.jwtid);
+          resolve(reply);  
+        }
       });     
     });
   }
