@@ -66,7 +66,7 @@ router.post('/logout', validateToken, (req, res) => {
   // reset the user connections 
   res.status(200).send({
     message: 'User has been successfully logged out!!',
-    error: true
+    error: false
   });  
 });
 
