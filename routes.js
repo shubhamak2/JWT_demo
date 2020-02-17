@@ -80,7 +80,7 @@ router.post('/logout', validateToken, isTokenBlackListed, async (req, res) => {
   
   res.status(200).send({
     message: 'User has been successfully logged out!!',
-    error: true
+    error: false
   });  
 });
 
